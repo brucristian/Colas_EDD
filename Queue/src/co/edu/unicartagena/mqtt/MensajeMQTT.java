@@ -1,5 +1,8 @@
 package co.edu.unicartagena.mqtt;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class MensajeMQTT{
     private final int id;
     private final String dispositivoId;
@@ -7,12 +10,12 @@ public class MensajeMQTT{
     private final String payload;
     private final String timestamp;
 
-    public MensajeMQTT(int id, String dispositivoId, String topic, String payload, String timestamp) {
+    public MensajeMQTT(int id, String dispositivoId, String topic, String payload) {
         this.id = id;
         this.dispositivoId = dispositivoId;
         this.topic = topic;
         this.payload = payload;
-        this.timestamp = timestamp;
+        this.timestamp = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
 
     public int getId() {

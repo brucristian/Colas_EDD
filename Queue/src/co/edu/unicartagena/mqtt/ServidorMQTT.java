@@ -3,8 +3,6 @@ package co.edu.unicartagena.mqtt;
 import co.edu.unicartagena.queue.Cola;
 import co.edu.unicartagena.queue.Nodo;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,8 +13,6 @@ public class ServidorMQTT {
     private int contadorId;
     private int mensajesEnCola;
     private Random random;
-    private LocalTime relojSimulado;
-    private DateTimeFormatter formatoHora;
 
     //constructor
 
@@ -27,8 +23,6 @@ public class ServidorMQTT {
         this.contadorId = 1;
         this.mensajesEnCola = 0;
         this.random = new Random();
-        this.relojSimulado = LocalTime.of(10, 0, 0);
-        this.formatoHora = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     }
 
@@ -39,22 +33,21 @@ public class ServidorMQTT {
     public List<Sensor> getSensoresRegistrados() { return sensoresRegistrados; }
 
     // publicarMensaje: mensaje crea un objeto mensajeMQTT y lo encola a la estructura
-    public void publicarMensaje(String dispositivoId, String topic, String payload,
-                                String timestamp) {
+    public void publicarMensaje(String dispositivoId, String topic, String payload) {
         MensajeMQTT mensaje = new MensajeMQTT(contadorId, dispositivoId, topic,
-                payload, timestamp);
+                payload);
 
         contadorId++;
         cola.encolar(new Nodo<>(mensaje));
         mensajesEnCola++;
         System.out.println("Publicado -> " + mensaje);
+        System.out.println("Estado de la cola (Frente -> Final): " + estadoDeLaCola());
     }
-    // publicar se utiliza para generar el mensaje con valores random(); en payload y timestamp
+    // publicar se utiliza para generar el mensaje con valores random(); en payload
     public void publicarMensaje(Sensor sensor) {
 
         String payload = generarPayload(sensor);
-        String timestamp = generarTimestamp();
-        publicarMensaje(sensor.getId(), sensor.getTopic(), payload, timestamp);
+        publicarMensaje(sensor.getId(), sensor.getTopic(), payload);
     }
 
     // aqui se procesa el mensaje, se decola de la estructura y se muestra en pantalla
@@ -69,6 +62,7 @@ public class ServidorMQTT {
         mensajesEnCola--;
         System.out.println("Procesado -> " + mensaje);
         System.out.println("Mensajes restantes en la cola: " + mensajesEnCola);
+        System.out.println("Estado de la cola (Frente -> Final): " + estadoDeLaCola());
     }
     // aqui uso un menu para generar el random(); de payload dependiendo de medicion
     private String generarPayload(Sensor sensor) {
@@ -87,11 +81,24 @@ public class ServidorMQTT {
         }
     }
 
-    // aqui utilizo otro generador de timestamp para que la hora sea de forma aleatoria
-    private String generarTimestamp() {
+    //metodo para mostrar el estado de la cola en ejecucion de la secuencia prueba
+    private String estadoDeLaCola(){
+        String estado = "";
 
-        relojSimulado = relojSimulado.plusSeconds(1 + random.nextInt(10));
-        return relojSimulado.format(formatoHora);
+        for(int i = 0; i < mensajesEnCola; i++){
+            MensajeMQTT mensaje = cola.decolar();
 
+            if(i > 0){
+                estado += " -> ";
+            }
+            estado += mensaje.getDispositivoId();
+
+            cola.encolar(new Nodo<>(mensaje));
+        }
+
+        if(estado.equals("")){
+            return "(vacia)";
+        }
+        return estado;
     }
 }

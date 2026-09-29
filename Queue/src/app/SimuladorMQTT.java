@@ -29,7 +29,7 @@ public class SimuladorMQTT {
 					servidor.procesarMensaje();
 					break;
 				case 3:
-					ejecutarSecuenciaDePrueba(servidor);
+					ejecutarSecuenciaDePrueba();
 					break;
 				case 4:
 					mostrarSensores(servidor);
@@ -106,19 +106,23 @@ public class SimuladorMQTT {
 
 	}
 
-	private static void ejecutarSecuenciaDePrueba(ServidorMQTT servidor) {
-		servidor.publicarMensaje("S01", "iot/sensor01/temperatura", "28.5 °C", "10:00:01");
-		servidor.publicarMensaje("S02", "iot/sensor02/humedad", "76 %", "10:00:05");
-		servidor.publicarMensaje("S03", "iot/sensor03/nivel", "45 cm", "10:00:09");
 
-		servidor.procesarMensaje();
 
-		servidor.publicarMensaje("S01", "iot/sensor01/temperatura", "29.1 °C", "10:00:15");
+	private static void ejecutarSecuenciaDePrueba() {
+		ServidorMQTT servidorPrueba = new ServidorMQTT();
 
-		servidor.procesarMensaje();
-		servidor.procesarMensaje();
-		servidor.procesarMensaje();
+		servidorPrueba.publicarMensaje("S01", "iot/sensor01/temperatura", "28.5 °C");
+		servidorPrueba.publicarMensaje("S02", "iot/sensor02/humedad", "76 %");
+		servidorPrueba.publicarMensaje("S03", "iot/sensor03/nivel", "45 cm");
 
-		servidor.procesarMensaje();
+		servidorPrueba.procesarMensaje();
+
+		servidorPrueba.publicarMensaje("S01", "iot/sensor01/temperatura", "29.1 °C");
+
+		servidorPrueba.procesarMensaje();
+		servidorPrueba.procesarMensaje();
+		servidorPrueba.procesarMensaje();
+
+		servidorPrueba.procesarMensaje();
 	}
 }
