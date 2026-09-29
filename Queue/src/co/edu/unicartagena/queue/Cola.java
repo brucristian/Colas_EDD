@@ -47,7 +47,4 @@ public class Cola <T>{
 		tamaño=tamaño+1;
 		return true;
 	}
-
-	public boolean encolarDato(T dato) {return encolar(new Nodo<>(dato));}
-	public int getTamaño() { return this.tamaño;}
 }

@@ -5,7 +5,7 @@ import co.edu.unicartagena.mqtt.ServidorMQTT;
 
 import java.util.List;
 import java.util.Scanner;
-
+//Escobar_Armando_6902510023_Bru_Cristian_6902510029
 public class SimuladorMQTT {
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
